@@ -1,30 +1,18 @@
-#include "EEPROM.h"
-#include "rom/crc.h"
+#include <EEPROM.h>
+#include <rom/crc.h>
 
-// EEPROM Locations
-#define VERSION_START 0
-#define VERSION_LENGTH 8
-
-#define NAME_START 8
-#define NAME_LENGTH 32
-
-#define WIFI_SSID_START 40
-#define WIFI_SSID_LENGTH 32
-
-#define WIFI_PASS_START 72
-#define WIFI_PASS_LENGTH 32
-
-#define SERVER_URL_START 104
-#define SERVER_URL_LENGTH 32
-
-#define DEVICE_TYPE_START 136
-#define DEVICE_TYPE_LENGTH 2
-
-#define CRC_START 254
-#define CRC_LENGTH 2
+#include "eeprom_locations.h"
 
 String getConfigName() {
   return EEPROM.readString(NAME_START);
+}
+
+String getWifiSSID() {
+  return EEPROM.readString(WIFI_SSID_START);
+}
+
+String getWifiPass() {
+  return EEPROM.readString(WIFI_PASS_START);
 }
 
 void verifyConfig() {
@@ -40,11 +28,7 @@ void verifyConfig() {
   String stringData;
   
   // Redraw screen
-  M5.Lcd.fillScreen(TFT_BLACK);
-  drawHeader();
-  M5.Lcd.setTextSize(0);
-  M5.Lcd.setCursor(0, 18);
-  M5.Lcd.setTextColor(TFT_WHITE);
+  drawStarupScreen();
 
   // Clear Memory
   Serial.print("Clearing Memory .. ");
@@ -73,7 +57,6 @@ void verifyConfig() {
   Serial.print("Reading EEPROM .. ");
   M5.Lcd.print("Reading EEPROM .. ");
 
-
   // Version
   stringData = EEPROM.readString(VERSION_START);
   stringData.toCharArray(Version, VERSION_LENGTH);
@@ -83,11 +66,11 @@ void verifyConfig() {
   stringData.toCharArray(Name, NAME_LENGTH);
 
   // WifiSSID
-  stringData = EEPROM.readString(WIFI_SSID_START);
+  stringData = getWifiSSID();
   stringData.toCharArray(WifiSSID, WIFI_SSID_LENGTH);
 
   // WifiPass
-  stringData = EEPROM.readString(WIFI_PASS_START);
+  stringData = getWifiPass();
   stringData.toCharArray(WifiPass, WIFI_PASS_LENGTH);
 
   // ServerURL

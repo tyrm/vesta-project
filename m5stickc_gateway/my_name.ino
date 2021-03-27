@@ -1,4 +1,4 @@
-#define NAME_LENGTH 32
+#include "eeprom_locations.h"
 
 char gMyName[NAME_LENGTH];
 
@@ -8,11 +8,7 @@ char* getMyName() {
 
 void initMyName() {
   // Redraw screen
-  M5.Lcd.fillScreen(TFT_BLACK);
-  drawHeader();
-  M5.Lcd.setTextSize(1);
-  M5.Lcd.setCursor(0, 18);
-  M5.Lcd.setTextColor(TFT_WHITE);
+  drawStarupScreen();
   
   Serial.print("\nReading name .. ");
   M5.Lcd.print("Reading name .. ");

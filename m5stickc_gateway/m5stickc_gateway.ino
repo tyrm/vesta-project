@@ -8,6 +8,7 @@ void setup() {
   delay(100);
   initMyName();
   delay(1000);
+  initWifi();
   
 }
 

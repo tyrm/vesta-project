@@ -1,0 +1,21 @@
+// EEPROM Locations
+#define VERSION_START 0
+#define VERSION_LENGTH 8
+
+#define NAME_START 8
+#define NAME_LENGTH 32
+
+#define WIFI_SSID_START 40
+#define WIFI_SSID_LENGTH 32
+
+#define WIFI_PASS_START 72
+#define WIFI_PASS_LENGTH 32
+
+#define SERVER_URL_START 104
+#define SERVER_URL_LENGTH 32
+
+#define DEVICE_TYPE_START 136
+#define DEVICE_TYPE_LENGTH 2
+
+#define CRC_START 254
+#define CRC_LENGTH 2
