@@ -7,6 +7,10 @@ String getConfigName() {
   return EEPROM.readString(NAME_START);
 }
 
+String getConfigServerURL() {
+  return EEPROM.readString(SERVER_URL_START);
+}
+
 String getWifiSSID() {
   return EEPROM.readString(WIFI_SSID_START);
 }
@@ -74,7 +78,7 @@ void verifyConfig() {
   stringData.toCharArray(WifiPass, WIFI_PASS_LENGTH);
 
   // ServerURL
-  stringData = EEPROM.readString(SERVER_URL_START);
+  stringData = getConfigServerURL();
   stringData.toCharArray(ServerURL, SERVER_URL_LENGTH);
 
   // DeviceType

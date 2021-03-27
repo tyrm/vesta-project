@@ -1,19 +1,22 @@
 #include <M5StickC.h>
 
+
 void setup() {
   // Startup
   initHardware();
-  delay(100);
+  delay(1000);
   verifyConfig();
-  delay(100);
+  delay(1000);
   initMyName();
   delay(1000);
   initWifi();
-  
+  delay(1000);
+  initMq();
 }
 
 void loop() {
-  Serial.print("Beep Boop. I am ");
-  Serial.println(getMyName());
+  mqLoop();
+  beeperLoop();
+  
   delay(5000);
 }
