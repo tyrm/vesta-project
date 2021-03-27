@@ -23,6 +23,10 @@
 #define CRC_START 254
 #define CRC_LENGTH 2
 
+String getConfigName() {
+  return EEPROM.readString(NAME_START);
+}
+
 void verifyConfig() {
   char Version[VERSION_LENGTH];
   char Name[NAME_LENGTH];
@@ -75,7 +79,7 @@ void verifyConfig() {
   stringData.toCharArray(Version, VERSION_LENGTH);
 
   // Name
-  stringData = EEPROM.readString(NAME_START);
+  stringData = getConfigName();
   stringData.toCharArray(Name, NAME_LENGTH);
 
   // WifiSSID
@@ -98,21 +102,6 @@ void verifyConfig() {
 
   Serial.println("[ok]");
   M5.Lcd.println("[ok]");
-
-  Serial.print("  Version: ");
-  Serial.println(Version);
-  Serial.print("  Name: ");
-  Serial.println(Name);
-  Serial.print("  WifiSSID: ");
-  Serial.println(WifiSSID);
-  Serial.print("  WifiPass: ");
-  Serial.println(WifiPass);
-  Serial.print("  ServerURL: ");
-  Serial.println(ServerURL);
-  Serial.print("  DeviceType: ");
-  Serial.println(DeviceType, DEC);
-  Serial.print("  Stored CRC: 0x");
-  Serial.println(storedCrc, HEX);
   
   // Calculate CRC
   Serial.print("Calculating CRC .. ");

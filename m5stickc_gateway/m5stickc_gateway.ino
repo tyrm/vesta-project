@@ -6,9 +6,13 @@ void setup() {
   delay(100);
   verifyConfig();
   delay(100);
+  initMyName();
+  delay(1000);
+  
 }
 
 void loop() {
-  Serial.println("Beep Boop.");
+  Serial.print("Beep Boop. I am ");
+  Serial.println(getMyName());
   delay(5000);
 }
