@@ -46,19 +46,19 @@ void verifyConfig() {
   Serial.print("Clearing Memory .. ");
   M5.Lcd.print("Clearing Memory .. ");
 
-  for (int i = 0; i <= VERSION_LENGTH; i++) {
+  for (int i = 0; i < VERSION_LENGTH; i++) {
     Version[i] = '\0';
   }
-  for (int i = 0; i <= NAME_LENGTH; i++) {
+  for (int i = 0; i < NAME_LENGTH; i++) {
     Name[i] = '\0';
   }
-  for (int i = 0; i <= WIFI_SSID_LENGTH; i++) {
+  for (int i = 0; i < WIFI_SSID_LENGTH; i++) {
     WifiSSID[i] = '\0';
   }
-  for (int i = 0; i <= WIFI_PASS_LENGTH; i++) {
+  for (int i = 0; i < WIFI_PASS_LENGTH; i++) {
     WifiPass[i] = '\0';
   }
-  for (int i = 0; i <= SERVER_URL_LENGTH; i++) {
+  for (int i = 0; i < SERVER_URL_LENGTH; i++) {
     ServerURL[i] = '\0';
   }
   
@@ -153,4 +153,14 @@ void verifyConfig() {
   M5.Lcd.print(" Calcld CRC: 0x");
   Serial.println(crc, HEX);
   M5.Lcd.println(crc, HEX);
+  
+  if (storedCrc != crc) {
+    M5.Lcd.setTextColor(TFT_RED);
+    Serial.println("\nCRCs don't match");
+    M5.Lcd.println("CRCs don't match");
+    Serial.println("Restarting...");
+    M5.Lcd.println("Restarting...");
+    delay(5000);
+    ESP.restart();
+  }
 }
