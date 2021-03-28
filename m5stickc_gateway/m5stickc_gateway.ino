@@ -1,5 +1,7 @@
 #include <M5StickC.h>
 
+// Make sure to set partition scheme to: Minimal SPIFFS
+
 void setup() {
   // Startup
   initHardware();
