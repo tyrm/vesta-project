@@ -13,6 +13,7 @@ Max 512 Bytes
 | 106-137 | 32  | Server URL         |
 | 138-169 | 32  | Server Username    |
 | 170-201 | 32  | Server Password    |
+| 202-233 | 32  | OTA Password       |
 | 254-255 | 2   | Config CRC16       |
 | 256-511 | 256 | Device Type Config |
 
