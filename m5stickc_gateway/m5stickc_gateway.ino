@@ -11,12 +11,10 @@ void setup() {
   delay(1000);
   initWifi();
   delay(1000);
-  initMq();
+  initMq();  
 }
 
 void loop() {
   mqLoop();
   beeperLoop();
-  
-  delay(5000);
 }
