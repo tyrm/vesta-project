@@ -1,6 +1,5 @@
 #include <M5StickC.h>
 
-
 void setup() {
   // Startup
   initHardware();
@@ -11,7 +10,7 @@ void setup() {
   delay(1000);
   initWifi();
   delay(1000);
-  initMq();  
+  initMq();
 }
 
 void loop() {

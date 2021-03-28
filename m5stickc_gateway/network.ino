@@ -18,17 +18,16 @@ void initWifi() {
   
   // WifiSSID
   char wifiSSID[WIFI_SSID_LENGTH];
-  stringData = getWifiSSID();
+  stringData = getConfigWifiSSID();
   stringData.toCharArray(wifiSSID, WIFI_SSID_LENGTH);
 
   // WifiPass
   char wifiPass[WIFI_PASS_LENGTH];
-  stringData = getWifiPass();
+  stringData = getConfigWifiPass();
   stringData.toCharArray(wifiPass, WIFI_PASS_LENGTH);
   Serial.println("[ok]");
   M5.Lcd.println("[ok]");
 
-  
   Serial.print("  SSID: ");
   M5.Lcd.print("  SSID: ");
   Serial.println(wifiSSID);

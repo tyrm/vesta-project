@@ -11,11 +11,11 @@ String getConfigServerURL() {
   return EEPROM.readString(SERVER_URL_START);
 }
 
-String getWifiSSID() {
+String getConfigWifiSSID() {
   return EEPROM.readString(WIFI_SSID_START);
 }
 
-String getWifiPass() {
+String getConfigWifiPass() {
   return EEPROM.readString(WIFI_PASS_START);
 }
 
@@ -70,11 +70,11 @@ void verifyConfig() {
   stringData.toCharArray(Name, NAME_LENGTH);
 
   // WifiSSID
-  stringData = getWifiSSID();
+  stringData = getConfigWifiSSID();
   stringData.toCharArray(WifiSSID, WIFI_SSID_LENGTH);
 
   // WifiPass
-  stringData = getWifiPass();
+  stringData = getConfigWifiPass();
   stringData.toCharArray(WifiPass, WIFI_PASS_LENGTH);
 
   // ServerURL

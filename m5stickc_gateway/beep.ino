@@ -1,6 +1,5 @@
-unsigned long lastBeep = 0;
-
 void beeperLoop() {
+  static unsigned long lastBeep = 0;
   unsigned long currentMillis = millis();
 
   if(currentMillis - lastBeep > 5000) {
