@@ -1,11 +1,20 @@
 #include <ArduinoOTA.h>
 
+#include "eeprom_locations.h"
+
+char gOtaPassword[OTA_PASSWORD_LENGTH];
+
 void initOTA() {
   // Redraw screen
   drawStarupScreen();
   
+  // OtaPassword
+  String stringData = getConfigOtaPassword();
+  stringData.toCharArray(gOtaPassword, OTA_PASSWORD_LENGTH);
+  
+  // Start OTA
   ArduinoOTA.setHostname(getMyName());
-  ArduinoOTA.setPassword("admin");
+  ArduinoOTA.setPassword(gOtaPassword);
   
   ArduinoOTA
     .onStart([]() {

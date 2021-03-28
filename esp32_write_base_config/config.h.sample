@@ -5,3 +5,4 @@
 #define SERVER_URL      "server.example.com"
 #define SERVER_USERNAME "guest"
 #define SERVER_PASSWORD "guest"
+#define OTA_PASSWORD    "admin"

@@ -7,6 +7,10 @@ String getConfigName() {
   return EEPROM.readString(DEVICE_NAME_START);
 }
 
+String getConfigOtaPassword() {
+  return EEPROM.readString(OTA_PASSWORD_START);
+}
+
 String getConfigServerPassword() {
   return EEPROM.readString(SERVER_PASSWORD_START);
 }
@@ -36,6 +40,7 @@ void verifyConfig() {
   char ServerURL[SERVER_URL_LENGTH];
   char ServerUsername[SERVER_USERNAME_LENGTH];
   char ServerPassword[SERVER_PASSWORD_LENGTH];
+  char OtaPassword[OTA_PASSWORD_LENGTH];
 
   uint16_t storedCrc;
 
@@ -68,6 +73,9 @@ void verifyConfig() {
   }
   for (int i = 0; i < SERVER_PASSWORD_LENGTH; i++) {
     ServerPassword[i] = '\0';
+  }
+  for (int i = 0; i < OTA_PASSWORD_LENGTH; i++) {
+    OtaPassword[i] = '\0';
   }
   
   Serial.println("[ok]");
@@ -108,6 +116,10 @@ void verifyConfig() {
   stringData = getConfigServerPassword();
   stringData.toCharArray(ServerPassword, SERVER_PASSWORD_LENGTH);
 
+  // OtaPassword
+  stringData = getConfigOtaPassword();
+  stringData.toCharArray(OtaPassword, OTA_PASSWORD_LENGTH);
+
   // Stored CRC
   storedCrc = EEPROM.readUShort(CRC_START);
 
@@ -145,6 +157,9 @@ void verifyConfig() {
 
   crcData = (uint8_t*)ServerPassword;
   crc = crc16_be(crc, crcData, SERVER_PASSWORD_LENGTH);
+
+  crcData = (uint8_t*)OtaPassword;
+  crc = crc16_be(crc, crcData, OTA_PASSWORD_LENGTH);
 
   crc = ~crc;
 
