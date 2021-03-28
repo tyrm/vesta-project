@@ -104,10 +104,14 @@ void mqReconnect() {
     // Attempt to connect
     if (mqClient.connect(getMyName(), gServerUsername, gServerPassword)) {
       Serial.println("connected");
-      // Once connected, publish an announcement...
-      //client.publish("outTopic","hello world");
-      // ... and resubscribe
-      //client.subscribe("inTopic");
+      
+      String nameString = getMyName();
+      String namedSubString = "gateway.cmd." + nameString;
+      char namedSub[namedSubString.length() + 1];
+      namedSubString.toCharArray(namedSub, namedSubString.length() + 1);
+      mqClient.subscribe(namedSub);
+      
+      mqClient.subscribe("gateway.cmd.all");
     } else {
       Serial.print("failed, rc=");
       Serial.print(mqClient.state());
