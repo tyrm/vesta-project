@@ -11,9 +11,12 @@ void setup() {
   initWifi();
   delay(1000);
   initMq();
+  delay(1000);
+  initOTA();
 }
 
 void loop() {
   mqLoop();
   beeperLoop();
+  otaLoop();
 }
