@@ -6,11 +6,13 @@
 
 char Version[VERSION_LENGTH] = "VST001";
 
-char Name[NAME_LENGTH] = NAME;
+char DeviceName[DEVICE_NAME_LENGTH] = DEVICE_NAME;
+uint16_t DeviceType = DEVICE_TYPE;
 char WifiSSID[WIFI_SSID_LENGTH] = WIFI_SSID;
 char WifiPass[WIFI_PASS_LENGTH] = WIFI_PASS;
 char ServerURL[SERVER_URL_LENGTH] = SERVER_URL;
-uint16_t DeviceType = DEVICE_TYPE;
+char ServerUsername[SERVER_USERNAME_LENGTH] = SERVER_USERNAME;
+char ServerPassword[SERVER_PASSWORD_LENGTH] = SERVER_PASSWORD;
 
 void setup() {
   Serial.begin(115200);
@@ -30,9 +32,14 @@ void setup() {
   uint8_t* crcData = (uint8_t*)Version;
   crc = crc16_be(crc, crcData, VERSION_LENGTH);
 
-  crcData = (uint8_t*)Name;
-  crc = crc16_be(crc, crcData, NAME_LENGTH);
+  crcData = (uint8_t*)DeviceName;
+  crc = crc16_be(crc, crcData, DEVICE_NAME_LENGTH);
 
+  byte low = DeviceType;
+  byte high = DeviceType >> 8;
+  uint8_t deviceTypeBytes[] = {high, low};
+  crc = crc16_be(crc, deviceTypeBytes, DEVICE_TYPE_LENGTH);
+  
   crcData = (uint8_t*)WifiSSID;
   crc = crc16_be(crc, crcData, WIFI_SSID_LENGTH);
 
@@ -42,10 +49,11 @@ void setup() {
   crcData = (uint8_t*)ServerURL;
   crc = crc16_be(crc, crcData, SERVER_URL_LENGTH);
 
-  byte low = DeviceType;
-  byte high = DeviceType >> 8;
-  uint8_t deviceTypeBytes[] = {high, low};
-  crc = crc16_be(crc, deviceTypeBytes, DEVICE_TYPE_LENGTH);
+  crcData = (uint8_t*)ServerUsername;
+  crc = crc16_be(crc, crcData, SERVER_USERNAME_LENGTH);
+
+  crcData = (uint8_t*)ServerPassword;
+  crc = crc16_be(crc, crcData, SERVER_PASSWORD_LENGTH);
   
   crc = ~crc;
 
@@ -59,7 +67,10 @@ void setup() {
   EEPROM.writeString(VERSION_START, Version);
   
   Serial.println("  Writing Name");
-  EEPROM.writeString(NAME_START, Name);
+  EEPROM.writeString(DEVICE_NAME_START, DeviceName);
+  
+  Serial.println("  Writing DeviceType");
+  EEPROM.writeUShort(DEVICE_TYPE_START, DeviceType);
   
   Serial.println("  Writing WifiSSID");
   EEPROM.writeString(WIFI_SSID_START, WifiSSID);
@@ -70,10 +81,14 @@ void setup() {
   Serial.println("  Writing ServerURL");
   EEPROM.writeString(SERVER_URL_START, ServerURL);
   
-  Serial.println("  Writing DeviceType");
-  EEPROM.writeUShort(DEVICE_TYPE_START, DeviceType);
+  Serial.println("  Writing ServerUsername");
+  EEPROM.writeString(SERVER_USERNAME_START, ServerUsername);
   
-  Serial.println("  Writing CRC16: 0x");
+  Serial.println("  Writing ServerPassword");
+  EEPROM.writeString(SERVER_PASSWORD_START, ServerPassword);
+  
+  Serial.print("  Writing CRC16: 0x");
+  Serial.println(crc, HEX);
   EEPROM.writeUShort(CRC_START, crc);
 
   EEPROM.commit();

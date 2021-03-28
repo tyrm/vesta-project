@@ -6,6 +6,8 @@
 WiFiClient wifiClient;
 PubSubClient mqClient(wifiClient);
 char gServerURL[SERVER_URL_LENGTH];
+char gServerUsername[SERVER_USERNAME_LENGTH];
+char gServerPassword[SERVER_PASSWORD_LENGTH];
 
 void initWifi() {
   // Redraw screen
@@ -64,6 +66,14 @@ void initMq() {
   String stringData = getConfigServerURL();
   stringData.toCharArray(gServerURL, SERVER_URL_LENGTH);
   
+  // ServerUsername
+  stringData = getConfigServerUsername();
+  stringData.toCharArray(gServerUsername, SERVER_USERNAME_LENGTH);
+  
+  // ServerPassword
+  stringData = getConfigServerPassword();
+  stringData.toCharArray(gServerPassword, SERVER_PASSWORD_LENGTH);
+  
   Serial.println("[ok]");
   M5.Lcd.println("[ok]");
   
@@ -89,10 +99,10 @@ void mqLoop() {
 }
 
 void mqReconnect() {
-    while (!mqClient.connected()) {
+  while (!mqClient.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (mqClient.connect(getMyName())) {
+    if (mqClient.connect(getMyName(), gServerUsername, gServerPassword)) {
       Serial.println("connected");
       // Once connected, publish an announcement...
       //client.publish("outTopic","hello world");

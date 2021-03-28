@@ -1,5 +1,7 @@
-#define NAME        "cupid"
-#define WIFI_SSID   "ssid"
-#define WIFI_PASS   "password1"
-#define SERVER_URL  "server.example.com"
-#define DEVICE_TYPE 1
+#define DEVICE_NAME     "cupid"
+#define DEVICE_TYPE     1
+#define WIFI_SSID       "ssid"
+#define WIFI_PASS       "password1"
+#define SERVER_URL      "server.example.com"
+#define SERVER_USERNAME "guest"
+#define SERVER_PASSWORD "guest"

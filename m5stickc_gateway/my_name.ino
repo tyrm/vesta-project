@@ -1,6 +1,6 @@
 #include "eeprom_locations.h"
 
-char gMyName[NAME_LENGTH];
+char gMyName[DEVICE_NAME_LENGTH];
 
 char* getMyName() {
   return gMyName;
@@ -12,9 +12,9 @@ void initMyName() {
   
   Serial.print("\nReading name .. ");
   M5.Lcd.print("Reading name .. ");
-  char newName[NAME_LENGTH];
+  char newName[DEVICE_NAME_LENGTH];
   String stringName = getConfigName();
-  stringName.toCharArray(newName, NAME_LENGTH);
+  stringName.toCharArray(newName, DEVICE_NAME_LENGTH);
 
   Serial.println("[ok]");
   M5.Lcd.println("[ok]");

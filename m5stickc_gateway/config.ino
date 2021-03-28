@@ -4,7 +4,15 @@
 #include "eeprom_locations.h"
 
 String getConfigName() {
-  return EEPROM.readString(NAME_START);
+  return EEPROM.readString(DEVICE_NAME_START);
+}
+
+String getConfigServerPassword() {
+  return EEPROM.readString(SERVER_PASSWORD_START);
+}
+
+String getConfigServerUsername() {
+  return EEPROM.readString(SERVER_USERNAME_START);
 }
 
 String getConfigServerURL() {
@@ -21,11 +29,13 @@ String getConfigWifiPass() {
 
 void verifyConfig() {
   char Version[VERSION_LENGTH];
-  char Name[NAME_LENGTH];
+  char DeviceName[DEVICE_NAME_LENGTH];
+  uint16_t DeviceType;
   char WifiSSID[WIFI_SSID_LENGTH];
   char WifiPass[WIFI_PASS_LENGTH];
   char ServerURL[SERVER_URL_LENGTH];
-  uint16_t DeviceType;
+  char ServerUsername[SERVER_USERNAME_LENGTH];
+  char ServerPassword[SERVER_PASSWORD_LENGTH];
 
   uint16_t storedCrc;
 
@@ -41,8 +51,8 @@ void verifyConfig() {
   for (int i = 0; i < VERSION_LENGTH; i++) {
     Version[i] = '\0';
   }
-  for (int i = 0; i < NAME_LENGTH; i++) {
-    Name[i] = '\0';
+  for (int i = 0; i < DEVICE_NAME_LENGTH; i++) {
+    DeviceName[i] = '\0';
   }
   for (int i = 0; i < WIFI_SSID_LENGTH; i++) {
     WifiSSID[i] = '\0';
@@ -52,6 +62,12 @@ void verifyConfig() {
   }
   for (int i = 0; i < SERVER_URL_LENGTH; i++) {
     ServerURL[i] = '\0';
+  }
+  for (int i = 0; i < SERVER_USERNAME_LENGTH; i++) {
+    ServerUsername[i] = '\0';
+  }
+  for (int i = 0; i < SERVER_PASSWORD_LENGTH; i++) {
+    ServerPassword[i] = '\0';
   }
   
   Serial.println("[ok]");
@@ -67,7 +83,10 @@ void verifyConfig() {
 
   // Name
   stringData = getConfigName();
-  stringData.toCharArray(Name, NAME_LENGTH);
+  stringData.toCharArray(DeviceName, DEVICE_NAME_LENGTH);
+
+  // DeviceType
+  DeviceType = EEPROM.readUShort(DEVICE_TYPE_START);
 
   // WifiSSID
   stringData = getConfigWifiSSID();
@@ -81,8 +100,13 @@ void verifyConfig() {
   stringData = getConfigServerURL();
   stringData.toCharArray(ServerURL, SERVER_URL_LENGTH);
 
-  // DeviceType
-  DeviceType = EEPROM.readUShort(DEVICE_TYPE_START);
+  // ServerUsername
+  stringData = getConfigServerUsername();
+  stringData.toCharArray(ServerUsername, SERVER_USERNAME_LENGTH);
+
+  // ServerPassword
+  stringData = getConfigServerPassword();
+  stringData.toCharArray(ServerPassword, SERVER_PASSWORD_LENGTH);
 
   // Stored CRC
   storedCrc = EEPROM.readUShort(CRC_START);
@@ -99,8 +123,13 @@ void verifyConfig() {
   uint8_t* crcData = (uint8_t*)Version;
   crc = crc16_be(crc, crcData, VERSION_LENGTH);
 
-  crcData = (uint8_t*)Name;
-  crc = crc16_be(crc, crcData, NAME_LENGTH);
+  crcData = (uint8_t*)DeviceName;
+  crc = crc16_be(crc, crcData, DEVICE_NAME_LENGTH);
+  
+  byte low = DeviceType;
+  byte high = DeviceType >> 8;
+  uint8_t deviceTypeBytes[] = {high, low};
+  crc = crc16_be(crc, deviceTypeBytes, DEVICE_TYPE_LENGTH);
 
   crcData = (uint8_t*)WifiSSID;
   crc = crc16_be(crc, crcData, WIFI_SSID_LENGTH);
@@ -111,10 +140,12 @@ void verifyConfig() {
   crcData = (uint8_t*)ServerURL;
   crc = crc16_be(crc, crcData, SERVER_URL_LENGTH);
 
-  byte low = DeviceType;
-  byte high = DeviceType >> 8;
-  uint8_t deviceTypeBytes[] = {high, low};
-  crc = crc16_be(crc, deviceTypeBytes, DEVICE_TYPE_LENGTH);
+  crcData = (uint8_t*)ServerUsername;
+  crc = crc16_be(crc, crcData, SERVER_USERNAME_LENGTH);
+
+  crcData = (uint8_t*)ServerPassword;
+  crc = crc16_be(crc, crcData, SERVER_PASSWORD_LENGTH);
+
   crc = ~crc;
 
   Serial.println("[ok]");
