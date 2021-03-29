@@ -8,9 +8,13 @@ void setup() {
   delay(100);
   verifyBaseConfig();
   delay(100);
+  verifyGatewayConfig();
+  delay(100);
   initMyName();
   delay(100);
   initWifi();
+  delay(100);
+  initTime();
   delay(100);
   initOTA();
   delay(100);

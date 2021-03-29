@@ -189,9 +189,80 @@ void verifyBaseConfig() {
     M5.Lcd.println("Restarting...");
     delay(5000);
     ESP.restart();
+  }  
+}
+
+void verifyGatewayConfig() {
+  uint16_t storedCrc;
+  String stringData;
+  
+  // Redraw screen
+  drawStarupScreen();
+
+  // Clear Memory
+  Serial.print("Clearing Memory .. ");
+  M5.Lcd.print("Clearing Memory .. ");
+  
+  char ntpServer[NTP_SERVER_LENGTH];
+
+  for (int i = 0; i < NTP_SERVER_LENGTH; i++) {
+    ntpServer[i] = '\0';
   }
+  
+  Serial.println("[ok]");
+  M5.Lcd.println("[ok]");
+
+  // Read Data into Memory
+  Serial.print("Reading gateway cfg .. ");
+  M5.Lcd.print("Reading gateway cfg .. ");
+
+  // ntpServer
+  stringData = getConfigNTPServer();
+  stringData.toCharArray(ntpServer, NTP_SERVER_LENGTH);
+  
+  // Stored CRC
+  storedCrc = EEPROM.readUShort(DEVICE_CRC_START);
+
+  Serial.println("[ok]");
+  M5.Lcd.println("[ok]");
+  
+  // Calculate CRC
+  Serial.print("Calculating CRC .. ");
+  M5.Lcd.print("Calculating CRC .. ");
+  
+  uint16_t crc = ~0x0000;
+
+  uint8_t* crcData = (uint8_t*)ntpServer;
+  crc = crc16_be(crc, crcData, NTP_SERVER_LENGTH);
+
+  crc = ~crc;
+
+  Serial.println("[ok]");
+  M5.Lcd.println("[ok]");
 
   
+  Serial.print("  NTPServer: ");
+  Serial.println(ntpServer);
+  
+  Serial.print(" Stored CRC: 0x");
+  M5.Lcd.print(" Stored CRC: 0x");
+  Serial.println(storedCrc, HEX);
+  M5.Lcd.println(storedCrc, HEX);
+  
+  Serial.print(" Calcld CRC: 0x");
+  M5.Lcd.print(" Calcld CRC: 0x");
+  Serial.println(crc, HEX);
+  M5.Lcd.println(crc, HEX);
 
+  // Verify some things
+  if (storedCrc != crc) {
+    M5.Lcd.setTextColor(TFT_RED);
+    Serial.println("\nCRCs don't match");
+    M5.Lcd.println("CRCs don't match");
+    Serial.println("Restarting...");
+    M5.Lcd.println("Restarting...");
+    delay(5000);
+    ESP.restart();
+  }  
   
 }
