@@ -5,16 +5,16 @@
 void setup() {
   // Startup
   initHardware();
-  delay(1000);
-  verifyConfig();
-  delay(1000);
+  delay(100);
+  verifyBaseConfig();
+  delay(100);
   initMyName();
-  delay(1000);
+  delay(100);
   initWifi();
-  delay(1000);
-  initMq();
-  delay(1000);
+  delay(100);
   initOTA();
+  delay(100);
+  initMq();
 }
 
 void loop() {

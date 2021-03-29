@@ -18,4 +18,8 @@ Max 512 Bytes
 | 256-511 | 256 | Device Type Config |
 
 ## Device Types
-### 1 - MStickC Gateway
+### 1 - Gateway
+| Bytes   | Len | Description        |
+| ------- | --- | ------------------ |
+| 256-287 | 32  | NTP Server         |
+| 510-511 | 2   | Config CRC16       |

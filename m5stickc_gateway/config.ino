@@ -7,6 +7,10 @@ String getConfigName() {
   return EEPROM.readString(DEVICE_NAME_START);
 }
 
+String getConfigNTPServer() {
+  return EEPROM.readString(NTP_SERVER_START);
+}
+
 String getConfigOtaPassword() {
   return EEPROM.readString(OTA_PASSWORD_START);
 }
@@ -31,7 +35,7 @@ String getConfigWifiPass() {
   return EEPROM.readString(WIFI_PASS_START);
 }
 
-void verifyConfig() {
+void verifyBaseConfig() {
   char Version[VERSION_LENGTH];
   char DeviceName[DEVICE_NAME_LENGTH];
   uint16_t DeviceType;
@@ -175,7 +179,8 @@ void verifyConfig() {
   M5.Lcd.print(" Calcld CRC: 0x");
   Serial.println(crc, HEX);
   M5.Lcd.println(crc, HEX);
-  
+
+  // Verify some things
   if (storedCrc != crc) {
     M5.Lcd.setTextColor(TFT_RED);
     Serial.println("\nCRCs don't match");
@@ -185,4 +190,8 @@ void verifyConfig() {
     delay(5000);
     ESP.restart();
   }
+
+  
+
+  
 }

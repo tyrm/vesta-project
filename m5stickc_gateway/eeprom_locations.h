@@ -1,4 +1,4 @@
-// EEPROM Locations
+// Standard Locations
 #define VERSION_START 0
 #define VERSION_LENGTH 8
 
@@ -28,3 +28,10 @@
 
 #define CRC_START 254
 #define CRC_LENGTH 2
+
+// Gateway Locations
+#define NTP_SERVER_START 256
+#define NTP_SERVER_LENGTH 32
+
+#define DEVICE_CRC_START 510
+#define DEVICE_CRC_LENGTH 2
