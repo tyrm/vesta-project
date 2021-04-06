@@ -1,7 +1,3 @@
-#include <NTPClient.h>
-#include <TimeLib.h>
-#include <WiFiUdp.h>
-
 #include "eeprom_locations.h"
 
 void initTime() {

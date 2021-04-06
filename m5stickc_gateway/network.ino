@@ -1,6 +1,3 @@
-#include <PubSubClient.h>
-#include <WiFi.h>
-
 #include "eeprom_locations.h"
 
 WiFiClient wifiClient;

@@ -1,5 +1,3 @@
-#include <ArduinoOTA.h>
-
 #include "eeprom_locations.h"
 
 char gOtaPassword[OTA_PASSWORD_LENGTH];

@@ -1,6 +1,3 @@
-#include <EEPROM.h>
-#include <rom/crc.h>
-
 #include "eeprom_locations.h"
 
 String getConfigName() {
