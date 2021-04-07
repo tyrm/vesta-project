@@ -6,6 +6,9 @@ void beeperLoop() {
     lastBeep = currentMillis;  
     
     Serial.print("Beep Boop. I am ");
-    Serial.println(getMyName());
+    Serial.print(getMyName());
+    Serial.print(". I have ");
+    Serial.print(ESP.getFreeHeap(), DEC);
+    Serial.println(" bytes free.");
   }
 }
