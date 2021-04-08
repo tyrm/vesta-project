@@ -85,70 +85,70 @@ void bleLoop() {
 }
 
 void lywsd03mmcConnect() {
-    Serial.print("connecting to ");
-    Serial.println(clientDevice->getAddress().toString().c_str());
+  Serial.print("connecting to ");
+  Serial.println(clientDevice->getAddress().toString().c_str());
+
+  pClient  = BLEDevice::createClient();
   
-    pClient  = BLEDevice::createClient();
-    
-    pClient->setClientCallbacks(new Lywsd03mmcClientCallback());
-    if (!pClient->connect(clientDevice)) {
-      Serial.println(" - Connection failed");
-      pClient->disconnect();
-      return;
-    }
+  pClient->setClientCallbacks(new Lywsd03mmcClientCallback());
+  if (!pClient->connect(clientDevice)) {
+    Serial.println(" - Connection failed");
+    pClient->disconnect();
+    return;
+  }
 
-    Serial.println(" - Connected to server");
-    lywsd03mmcConnected = true;
+  Serial.println(" - Connected to server");
+  lywsd03mmcConnected = true;
 
-    BLERemoteService* pService;
+  BLERemoteService* pService;
 
-    // get battery level
-    pService = pClient->getService(genericBatteryServiceUUID);
-    if (pService == nullptr) {
-      Serial.print("Failed to find our service UUID: ");
-      Serial.println(genericBatteryServiceUUID.toString().c_str());
-      pClient->disconnect();
-      return;
-    }
+  // get battery level
+  pService = pClient->getService(genericBatteryServiceUUID);
+  if (pService == nullptr) {
+    Serial.print("Failed to find our service UUID: ");
+    Serial.println(genericBatteryServiceUUID.toString().c_str());
+    pClient->disconnect();
+    return;
+  }
 
-    pRemoteCharacteristic = pService->getCharacteristic(genericBatteryCharUUID);
-    if (pRemoteCharacteristic == nullptr) {
-      Serial.print("Failed to find our characteristic UUID: ");
-      Serial.println(genericBatteryCharUUID.toString().c_str());
-      pClient->disconnect();
-      return;
-    }
-    Serial.println(" - Found battery characteristic");
+  pRemoteCharacteristic = pService->getCharacteristic(genericBatteryCharUUID);
+  if (pRemoteCharacteristic == nullptr) {
+    Serial.print("Failed to find our characteristic UUID: ");
+    Serial.println(genericBatteryCharUUID.toString().c_str());
+    pClient->disconnect();
+    return;
+  }
+  Serial.println(" - Found battery characteristic");
 
-    if(pRemoteCharacteristic->canRead()) {
-      std::string value = pRemoteCharacteristic->readValue();
-      Serial.print("The characteristic value was: '");
-      Serial.print(value[0], DEC);
-      Serial.println("'");
+  if(pRemoteCharacteristic->canRead()) {
+    std::string value = pRemoteCharacteristic->readValue();
+    Serial.print("The characteristic value was: '");
+    Serial.print(value[0], DEC);
+    Serial.println("'");
 
-      mqSendSensorBat(clientDevice->getAddress().toString().c_str(), (int)value[0]);
-    }
+    mqSendSensorBat(clientDevice->getAddress().toString().c_str(), (int)value[0]);
+  }
 
-    // setup notify to get temp
-    pService = pClient->getService(lywsd03mmcTempServiceUUID);
-    if (pService == nullptr) {
-      Serial.print("Failed to find our service UUID: ");
-      Serial.println(lywsd03mmcTempServiceUUID.toString().c_str());
-      pClient->disconnect();
-      return;
-    }
+  // setup notify to get temp
+  pService = pClient->getService(lywsd03mmcTempServiceUUID);
+  if (pService == nullptr) {
+    Serial.print("Failed to find our service UUID: ");
+    Serial.println(lywsd03mmcTempServiceUUID.toString().c_str());
+    pClient->disconnect();
+    return;
+  }
 
-    pRemoteCharacteristic = pService->getCharacteristic(lywsd03mmcTempCharUUID);
-    if (pRemoteCharacteristic == nullptr) {
-      Serial.print("Failed to find our characteristic UUID: ");
-      Serial.println(lywsd03mmcTempCharUUID.toString().c_str());
-      pClient->disconnect();
-      return;
-    }
-    Serial.println(" - Found temp characteristic");
+  pRemoteCharacteristic = pService->getCharacteristic(lywsd03mmcTempCharUUID);
+  if (pRemoteCharacteristic == nullptr) {
+    Serial.print("Failed to find our characteristic UUID: ");
+    Serial.println(lywsd03mmcTempCharUUID.toString().c_str());
+    pClient->disconnect();
+    return;
+  }
+  Serial.println(" - Found temp characteristic");
 
-    if(pRemoteCharacteristic->canNotify())
-      pRemoteCharacteristic->registerForNotify(lywsd03mmcNotifyCallback);
+  if(pRemoteCharacteristic->canNotify())
+    pRemoteCharacteristic->registerForNotify(lywsd03mmcNotifyCallback);
 }
 
 void getDataFromLywsd03mmc(const char* mac) {
