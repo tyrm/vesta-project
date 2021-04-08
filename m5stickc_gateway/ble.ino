@@ -4,9 +4,10 @@ static BLEUUID genericBatteryCharUUID((uint16_t)0x2A19);
 static BLEUUID lywsd03mmcTempServiceUUID("ebe0ccb0-7a0a-4b0c-8a1a-6ff2997da3a6");
 static BLEUUID lywsd03mmcTempCharUUID("ebe0ccc1-7a0a-4b0c-8a1a-6ff2997da3a6");
 
-static boolean lywsd03mmcDoConnect = false;
-static boolean lywsd03mmcConnected = false;
+static boolean bleConnected = false;
 static boolean closeClient = false;
+
+static boolean lywsd03mmcDoConnect = false;
 
 static BLEClient* pClient;
 static BLEAdvertisedDevice* clientDevice;
@@ -67,7 +68,7 @@ class Lywsd03mmcClientCallback : public BLEClientCallbacks {
   }
 
   void onDisconnect(BLEClient* pclient) {
-    lywsd03mmcConnected = false;
+    bleConnected = false;
     Serial.print("ble discconnected from ");
     Serial.println(pclient->getPeerAddress().toString().c_str());
   }
@@ -77,9 +78,9 @@ void bleLoop() {
   if (lywsd03mmcDoConnect == true) {
     lywsd03mmcConnect();
     lywsd03mmcDoConnect = false;
-  }
-  if (closeClient == true) {
+  } else if (closeClient == true) {
     pClient->disconnect();
+    
     closeClient = false;
   }
 }
@@ -88,7 +89,7 @@ void lywsd03mmcConnect() {
   Serial.print("connecting to ");
   Serial.println(clientDevice->getAddress().toString().c_str());
 
-  pClient  = BLEDevice::createClient();
+  pClient = BLEDevice::createClient();
   
   pClient->setClientCallbacks(new Lywsd03mmcClientCallback());
   if (!pClient->connect(clientDevice)) {
@@ -98,7 +99,7 @@ void lywsd03mmcConnect() {
   }
 
   Serial.println(" - Connected to server");
-  lywsd03mmcConnected = true;
+  bleConnected = true;
 
   BLERemoteService* pService;
 
