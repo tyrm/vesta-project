@@ -1,3 +1,6 @@
+static BLEUUID genericBatteryServiceUUID((uint16_t)0x180F);
+static BLEUUID genericBatteryCharUUID((uint16_t)0x2A19);
+
 static BLEUUID lywsd03mmcTempServiceUUID("ebe0ccb0-7a0a-4b0c-8a1a-6ff2997da3a6");
 static BLEUUID lywsd03mmcTempCharUUID("ebe0ccc1-7a0a-4b0c-8a1a-6ff2997da3a6");
 
@@ -10,6 +13,11 @@ static BLEAdvertisedDevice* clientDevice;
 static BLEAddress* searchAddress;
 static BLERemoteCharacteristic* pRemoteCharacteristic;
 
+typedef union {
+  short num;
+  byte b [sizeof(short)];
+} shortBytes;
+
 static void lywsd03mmcNotifyCallback(
   BLERemoteCharacteristic* pBLERemoteCharacteristic,
   uint8_t* pData,
@@ -20,7 +28,23 @@ static void lywsd03mmcNotifyCallback(
     Serial.print(" of data length ");
     Serial.println(length);
     Serial.print("data: '");
-    Serial.print((char*)pData);
+
+    shortBytes tempBytes;
+    tempBytes.b[0] = pData[0];
+    tempBytes.b[1] = pData[1];
+    float temp = tempBytes.num / 100.0;
+    Serial.print(temp);
+    
+    Serial.print(", ");
+    Serial.print(pData[2], DEC);
+    Serial.print(", ");
+
+    shortBytes voltageBytes;
+    voltageBytes.b[0] = pData[3];
+    voltageBytes.b[1] = pData[4];
+    float voltage = voltageBytes.num / 1000.0;
+    Serial.print(voltage);
+    
     Serial.println("'");
 
     closeClient = true;
@@ -65,33 +89,64 @@ void lywsd03mmcConnect() {
     Serial.println(clientDevice->getAddress().toString().c_str());
   
     pClient  = BLEDevice::createClient();
-    Serial.println(" - Created client");
     
     pClient->setClientCallbacks(new Lywsd03mmcClientCallback());
-    pClient->connect(clientDevice);
-    Serial.println(" - Connected to server");
+    if (!pClient->connect(clientDevice)) {
+      Serial.println(" - Connection failed");
+      pClient->disconnect();
+      return;
+    }
 
-    BLERemoteService* pRemoteService = pClient->getService(lywsd03mmcTempServiceUUID);
-    if (pRemoteService == nullptr) {
+    Serial.println(" - Connected to server");
+    lywsd03mmcConnected = true;
+
+    BLERemoteService* pService;
+
+    // get battery level
+    pService = pClient->getService(genericBatteryServiceUUID);
+    if (pService == nullptr) {
+      Serial.print("Failed to find our service UUID: ");
+      Serial.println(genericBatteryServiceUUID.toString().c_str());
+      pClient->disconnect();
+      return;
+    }
+
+    pRemoteCharacteristic = pService->getCharacteristic(genericBatteryCharUUID);
+    if (pRemoteCharacteristic == nullptr) {
+      Serial.print("Failed to find our characteristic UUID: ");
+      Serial.println(genericBatteryCharUUID.toString().c_str());
+      pClient->disconnect();
+      return;
+    }
+    Serial.println(" - Found battery characteristic");
+
+    if(pRemoteCharacteristic->canRead()) {
+      std::string value = pRemoteCharacteristic->readValue();
+      Serial.print("The characteristic value was: '");
+      Serial.print(value[0], DEC);
+      Serial.println("'");
+    }
+
+    // setup notify to get temp
+    pService = pClient->getService(lywsd03mmcTempServiceUUID);
+    if (pService == nullptr) {
       Serial.print("Failed to find our service UUID: ");
       Serial.println(lywsd03mmcTempServiceUUID.toString().c_str());
       pClient->disconnect();
       return;
     }
 
-    pRemoteCharacteristic = pRemoteService->getCharacteristic(lywsd03mmcTempCharUUID);
+    pRemoteCharacteristic = pService->getCharacteristic(lywsd03mmcTempCharUUID);
     if (pRemoteCharacteristic == nullptr) {
       Serial.print("Failed to find our characteristic UUID: ");
       Serial.println(lywsd03mmcTempCharUUID.toString().c_str());
       pClient->disconnect();
       return;
     }
-    Serial.println(" - Found our characteristic");
+    Serial.println(" - Found temp characteristic");
 
     if(pRemoteCharacteristic->canNotify())
       pRemoteCharacteristic->registerForNotify(lywsd03mmcNotifyCallback);
-    
-    lywsd03mmcConnected = true;
 }
 
 void getDataFromLywsd03mmc(const char* mac) {
@@ -102,9 +157,9 @@ void getDataFromLywsd03mmc(const char* mac) {
   pBLEScan->setInterval(1349);
   pBLEScan->setWindow(449);
   pBLEScan->setActiveScan(true);
-  pBLEScan->start(15, false);
+  pBLEScan->start(30, false);
 }
 
 void initBle() {
-  BLEDevice::init("");
+  BLEDevice::init(getMyName());
 }

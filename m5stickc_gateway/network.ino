@@ -1,10 +1,10 @@
 #include "eeprom_locations.h"
 
-WiFiClient wifiClient;
-PubSubClient mqClient(wifiClient);
-char gServerURL[SERVER_URL_LENGTH];
-char gServerUsername[SERVER_USERNAME_LENGTH];
-char gServerPassword[SERVER_PASSWORD_LENGTH];
+static WiFiClient wifiClient;
+static PubSubClient mqClient(wifiClient);
+static char gServerURL[SERVER_URL_LENGTH];
+static char gServerUsername[SERVER_USERNAME_LENGTH];
+static char gServerPassword[SERVER_PASSWORD_LENGTH];
 
 void initWifi() {
   // Redraw screen
