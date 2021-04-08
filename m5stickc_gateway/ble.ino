@@ -23,31 +23,28 @@ static void lywsd03mmcNotifyCallback(
   uint8_t* pData,
   size_t length,
   bool isNotify) {
+    shortBytes tempBytes;
+    tempBytes.b[0] = pData[0];
+    tempBytes.b[1] = pData[1];
+    float temp = tempBytes.num / 100.0;
+    
+    shortBytes voltageBytes;
+    voltageBytes.b[0] = pData[3];
+    voltageBytes.b[1] = pData[4];
+    float voltage = voltageBytes.num / 1000.0;
+    
     Serial.print("Notify callback for characteristic ");
     Serial.print(pBLERemoteCharacteristic->getUUID().toString().c_str());
     Serial.print(" of data length ");
     Serial.println(length);
     Serial.print("data: '");
-
-    shortBytes tempBytes;
-    tempBytes.b[0] = pData[0];
-    tempBytes.b[1] = pData[1];
-    float temp = tempBytes.num / 100.0;
     Serial.print(temp);
-    
     Serial.print(", ");
     Serial.print(pData[2], DEC);
     Serial.print(", ");
-
-    shortBytes voltageBytes;
-    voltageBytes.b[0] = pData[3];
-    voltageBytes.b[1] = pData[4];
-    float voltage = voltageBytes.num / 1000.0;
     Serial.print(voltage);
-    
     Serial.println("'");
 
-    
     mqSendSensorEnv(clientDevice->getAddress().toString().c_str(), temp, pData[2], voltage);
 
     closeClient = true;
