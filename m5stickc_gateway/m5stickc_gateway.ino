@@ -1,3 +1,4 @@
+#include <ArduinoJson.h>
 #include <ArduinoOTA.h>
 #include <BLEDevice.h>
 #include <EEPROM.h>
