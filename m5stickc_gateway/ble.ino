@@ -47,6 +47,9 @@ static void lywsd03mmcNotifyCallback(
     
     Serial.println("'");
 
+    
+    mqSendSensorEnv(clientDevice->getAddress().toString().c_str(), temp, pData[2], voltage);
+
     closeClient = true;
 }
 
@@ -125,6 +128,8 @@ void lywsd03mmcConnect() {
       Serial.print("The characteristic value was: '");
       Serial.print(value[0], DEC);
       Serial.println("'");
+
+      mqSendSensorBat(clientDevice->getAddress().toString().c_str(), (int)value[0]);
     }
 
     // setup notify to get temp

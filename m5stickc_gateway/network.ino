@@ -118,3 +118,31 @@ void mqReconnect() {
     }
   }
 }
+
+void mqSendSensorBat(const char* sensorID, int percent) {
+  DynamicJsonDocument doc(1024);
+  
+  doc["data"]["bat_p"] = percent;
+  doc["from"] = getMyName();
+  doc["sid"] = sensorID;
+  doc["ts"] = getTimestamp();
+
+  char jsonStr[200];
+  serializeJson(doc, jsonStr);
+  mqClient.publish("sensor.reading.bat",jsonStr);
+}
+
+void mqSendSensorEnv(const char* sensorID, float temp, int hum, float volt) {
+  DynamicJsonDocument doc(1024);
+  
+  doc["data"]["temp"] = temp;
+  doc["data"]["hum"] = hum;
+  doc["data"]["bat_v"] = volt;
+  doc["from"] = getMyName();
+  doc["sid"] = sensorID;
+  doc["ts"] = getTimestamp();
+
+  char jsonStr[200];
+  serializeJson(doc, jsonStr);
+  mqClient.publish("sensor.reading.env",jsonStr);
+}
